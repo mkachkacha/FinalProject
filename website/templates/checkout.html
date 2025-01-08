@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - TBCSHOP{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row">
+
+        <div class="col-md-4 order-md-2 mb-4">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-primary">Your Cart</span>
+                <span class="badge bg-primary rounded-pill">{{ cart_items|length }}</span>
+            </h4>
+            <ul class="list-group mb-3">
+                {% for item in cart_items %}
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <div>
+                        <h6 class="my-0">{{ item.product.name }}</h6>
+                        <small class="text-muted">Quantity: {{ item.quantity }}</small>
+                    </div>
+                    <span class="text-muted">₾{{ "%.2f"|format(item.product.price * item.quantity) }}</span>
+                </li>
+                {% endfor %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total</span>
+                    <strong>₾{{ "%.2f"|format(total) }}</strong>
+                </li>
+            </ul>
+        </div>
+
+
+        <div class="col-md-8 order-md-1">
+            <h4 class="mb-3">Delivery Information</h4>
+            <form method="POST">
+                {{ form.csrf_token }}
+                
+                <div class="mb-3">
+                    {{ form.address.label(class="form-label") }}
+                    {{ form.address(class="form-control") }}
+                    {% if form.address.errors %}
+                        {% for error in form.address.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.phone.label(class="form-label") }}
+                    {{ form.phone(class="form-control", placeholder="Enter your phone number") }}
+                    {% if form.phone.errors %}
+                        {% for error in form.phone.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.payment_method.label(class="form-label") }}
+                    {{ form.payment_method(class="form-select") }}
+                    {% if form.payment_method.errors %}
+                        {% for error in form.payment_method.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <hr class="my-4">
+
+                {{ form.submit(class="btn btn-primary btn-lg w-100") }}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

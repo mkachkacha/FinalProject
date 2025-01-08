@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Home - TBCSHOP{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Categories</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('home') }}" 
+                       class="list-group-item list-group-item-action {% if not selected_category %}active{% endif %}">
+                        All Products
+                    </a>
+                    {% for category in categories %}
+                    <a href="{{ url_for('home', category=category.id, search=search_query, sort=sort_by, order=sort_order) }}" 
+                       class="list-group-item list-group-item-action {% if selected_category == category.id %}active{% endif %}">
+                        {{ category.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-9">
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('home') }}" class="row g-3">
+                        {% if selected_category %}
+                        <input type="hidden" name="category" value="{{ selected_category }}">
+                        {% endif %}
+                        
+
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="search" 
+                                       placeholder="Search products..." value="{{ search_query }}">
+                                <button class="btn btn-outline-secondary" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <select class="form-select" name="sort" onchange="this.form.submit()">
+                                    <option value="name" {% if sort_by == 'name' and sort_order == 'asc' %}selected{% endif %}>
+                                        Name (A-Z)
+                                    </option>
+                                    <option value="name" {% if sort_by == 'name' and sort_order == 'desc' %}selected{% endif %}>
+                                        Name (Z-A)
+                                    </option>
+                                    <option value="price" {% if sort_by == 'price' and sort_order == 'asc' %}selected{% endif %}>
+                                        Price (Low to High)
+                                    </option>
+                                    <option value="price" {% if sort_by == 'price' and sort_order == 'desc' %}selected{% endif %}>
+                                        Price (High to Low)
+                                    </option>
+                                </select>
+                                <input type="hidden" name="order" value="{{ sort_order }}">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for product in products.items %}
+                <div class="col">
+                    <div class="card h-100">
+                        {% if product.image_url %}
+                        <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+                        {% else %}
+                        <img src="{{ url_for('static', filename='images/default-product.jpg') }}" 
+                             class="card-img-top" alt="Default Product Image">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text text-truncate">{{ product.description }}</p>
+                            <p class="card-text">
+                                <strong>₾{{ "%.2f"|format(product.price) }}</strong>
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}" 
+                                   class="btn btn-outline-primary">View Details</a>
+                                {% if product.stock > 0 %}
+                                <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </form>
+                                {% else %}
+                                <button class="btn btn-secondary" disabled>Out of Stock</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+
+            {% if products.pages > 1 %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if products.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('home', page=products.prev_num, 
+                           category=selected_category, search=search_query, sort=sort_by, order=sort_order) }}">
+                            Previous
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in products.iter_pages(left_edge=2, left_current=2, right_current=2, right_edge=2) %}
+                    {% if page_num %}
+                    <li class="page-item {% if page_num == products.page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('home', page=page_num, 
+                           category=selected_category, search=search_query, sort=sort_by, order=sort_order) }}">
+                            {{ page_num }}
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if products.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('home', page=products.next_num, 
+                           category=selected_category, search=search_query, sort=sort_by, order=sort_order) }}">
+                            Next
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle sort order toggle
+    const sortSelect = document.querySelector('select[name="sort"]');
+    const orderInput = document.querySelector('input[name="order"]');
+    
+    sortSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.value === sortSelect.value && orderInput.value === 'asc') {
+            orderInput.value = 'desc';
+        } else {
+            orderInput.value = 'asc';
+        }
+        this.form.submit();
+    });
+});
+</script>
+{% endblock %}

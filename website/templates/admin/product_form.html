@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}{% if product %}Edit{% else %}Add{% endif %} Product{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>{% if product %}Edit{% else %}Add{% endif %} Product</h1>
+    
+    <form method="POST" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label for="name" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ product.name if product else '' }}" required>
+            <div class="invalid-feedback">Please provide a product name.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required>{{ product.description if product else '' }}</textarea>
+            <div class="invalid-feedback">Please provide a product description.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" class="form-control" id="price" name="price" step="0.01" value="{{ "%.2f"|format(product.price) if product else '' }}" required>
+                <div class="invalid-feedback">Please provide a valid price.</div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="stock" class="form-label">Stock</label>
+            <input type="number" class="form-control" id="stock" name="stock" value="{{ product.stock if product else '' }}" required>
+            <div class="invalid-feedback">Please provide the stock quantity.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="category_id" class="form-label">Category</label>
+            <select class="form-select" id="category_id" name="category_id" required>
+                <option value="">Choose a category...</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}" {% if product and product.category_id == category.id %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+                {% endfor %}
+            </select>
+            <div class="invalid-feedback">Please select a category.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="image_url" class="form-label">Image URL</label>
+            <input type="url" class="form-control" id="image_url" name="image_url" value="{{ product.image_url if product else '' }}">
+            <div class="form-text">Optional: Provide a URL to the product image.</div>
+        </div>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">{% if product %}Update{% else %}Add{% endif %} Product</button>
+            <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+{% block scripts %}
+<script>
+// Form validation
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+</script>
+{% endblock %}
+{% endblock %}

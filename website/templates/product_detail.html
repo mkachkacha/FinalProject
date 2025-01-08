@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - Grocery Store{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            {% if product.image_url %}
+            <img src="{{ product.image_url }}" class="img-fluid rounded" alt="{{ product.name }}">
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h1>{{ product.name }}</h1>
+            <p class="lead">{{ product.description }}</p>
+            <p class="h3 text-primary">${{ "%.2f"|format(product.price) }}</p>
+            
+            {% if product.stock > 0 %}
+                <p class="text-success">In Stock ({{ product.stock }} available)</p>
+                {% if current_user.is_authenticated %}
+                <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity:</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add to Cart</button>
+                </form>
+                {% else %}
+                <p>Please <a href="{{ url_for('login') }}">login</a> to add items to cart.</p>
+                {% endif %}
+            {% else %}
+                <p class="text-danger">Out of Stock</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

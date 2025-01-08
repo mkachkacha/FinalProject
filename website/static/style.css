@@ -1,0 +1,233 @@
+
+:root {
+    --primary-color: #4CAF50;
+    --secondary-color: #2196F3;
+    --accent-color: #FF9800;
+    --danger-color: #f44336;
+    --success-color: #4CAF50;
+    --warning-color: #FFC107;
+    --info-color: #2196F3;
+    --light-gray: #f5f5f5;
+    --dark-gray: #333;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    background-color: var(--light-gray);
+    color: var(--dark-gray);
+}
+
+
+.navbar {
+    box-shadow: var(--box-shadow);
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color)) !important;
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: white !important;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: white !important;
+    transform: translateY(-1px);
+}
+
+
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: transform 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+}
+
+.card-title {
+    color: var(--primary-color);
+    margin-bottom: 0;
+}
+
+
+.btn {
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: darken(var(--primary-color), 10%);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+
+.product-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card .card-img-top {
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+}
+
+.product-card .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-price {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+
+.form-control {
+    border-radius: var(--border-radius);
+    padding: 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+    border-color: var(--primary-color);
+}
+
+
+.table {
+    background-color: white;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.table th {
+    background-color: var(--light-gray);
+    border-bottom: none;
+}
+
+.table td, .table th {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+
+.alert {
+    border-radius: var(--border-radius);
+    border: none;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+
+.badge {
+    padding: 0.5rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+
+.modal-content {
+    border-radius: var(--border-radius);
+    border: none;
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: var(--light-gray);
+}
+
+
+.footer {
+    background-color: white !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 2rem 0;
+    margin-top: 3rem;
+}
+
+
+.cart-badge {
+    position: relative;
+    display: inline-block;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: var(--danger-color);
+    color: white;
+    border-radius: 50%;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .table-responsive {
+        border-radius: var(--border-radius);
+    }
+}
