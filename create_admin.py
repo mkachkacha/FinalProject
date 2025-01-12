@@ -18,9 +18,9 @@ def create_admin():
         admin = User(
             username='admin',
             email='admin@tbcshop.com',
-            password_hash='admin123',
             is_admin=True
         )
+        admin.set_password('admin123')
         
         db.session.add(admin)
         db.session.commit()
