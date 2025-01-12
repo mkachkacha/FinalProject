@@ -22,6 +22,21 @@ stripe.api_key = app.config['STRIPE_SECRET_KEY']
 db.init_app(app)
 login_manager.init_app(app)
 
+def create_admin_user():
+    with app.app_context():
+        admin = User.query.filter_by(email='admin@tbcshop.com').first()
+        if not admin:
+            admin = User(
+                username='admin',
+                email='admin@tbcshop.com',
+                is_admin=True
+            )
+            admin.set_password('admin123')
+            db.session.add(admin)
+            db.session.commit()
+
+create_admin_user()
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
