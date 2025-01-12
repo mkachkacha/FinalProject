@@ -26,6 +26,19 @@ login_manager.init_app(app)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+@app.before_first_request
+def create_admin_if_not_exists():
+    admin = User.query.filter_by(email='admin@tbcshop.com').first()
+    if not admin:
+        admin = User(
+            username='admin',
+            email='admin@tbcshop.com',
+            is_admin=True
+        )
+        admin.set_password('admin123')
+        db.session.add(admin)
+        db.session.commit()
+
 @app.route('/')
 def home():
     page = request.args.get('page', 1, type=int)
