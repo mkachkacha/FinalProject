@@ -3,6 +3,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 import os
 from datetime import datetime
 import stripe
+import logging
 
 from extensions import db, login_manager
 from models import User, Category, Product, CartItem, Order, OrderItem
@@ -22,20 +23,6 @@ stripe.api_key = app.config['STRIPE_SECRET_KEY']
 db.init_app(app)
 login_manager.init_app(app)
 
-def create_admin_user():
-    with app.app_context():
-        admin = User.query.filter_by(email='admin@tbcshop.com').first()
-        if not admin:
-            admin = User(
-                username='admin',
-                email='admin@tbcshop.com',
-                is_admin=True
-            )
-            admin.set_password('admin123')
-            db.session.add(admin)
-            db.session.commit()
-
-create_admin_user()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -223,11 +210,17 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user)
-            flash('Logged in successfully!', 'success')
-            return redirect(url_for('home'))
-        flash('Invalid email or password.', 'danger')
+        if not user:
+            flash(f'No user found with email: {form.email.data}', 'danger')
+            return render_template('login.html', form=form)
+            
+        if not user.check_password(form.password.data):
+            flash('Incorrect password', 'danger')
+            return render_template('login.html', form=form)
+            
+        login_user(user)
+        flash('Logged in successfully!', 'success')
+        return redirect(url_for('home'))
     
     return render_template('login.html', form=form)
 
@@ -412,11 +405,7 @@ def init_db():
     with app.app_context():
         db.create_all()
 
-
 init_db()
-
-
-application = app
 
 if __name__ == '__main__':
     app.run(debug=True)
